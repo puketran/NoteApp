@@ -127,6 +127,28 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </div>
           </div>
 
+          <div>
+            <h3 className="text-sm font-medium mb-3">Keyboard Shortcuts</h3>
+            <div className="text-sm space-y-2">
+              <div className="flex items-center justify-between">
+                <span>Quick Search</span>
+                <kbd className="text-xs">Ctrl+F</kbd>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>New Note</span>
+                <kbd className="text-xs">Ctrl+N</kbd>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Settings</span>
+                <kbd className="text-xs">Ctrl+,</kbd>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Close Modal</span>
+                <kbd className="text-xs">Esc</kbd>
+              </div>
+            </div>
+          </div>
+
           <div className="pt-4 border-t">
             <Button
               variant="destructive"

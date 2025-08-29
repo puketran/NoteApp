@@ -1,5 +1,4 @@
-import React from 'react';
-import { Pin, Edit, Trash2, Eye } from 'lucide-react';
+import { Pin, Edit, Trash2, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Note } from '@/types';
 import { formatDate } from '@/lib/search';
@@ -12,7 +11,7 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note, onEdit, onView }: NoteCardProps) {
-  const { togglePin, deleteNote } = useNotesStore();
+  const { togglePin, deleteNote, duplicateNote } = useNotesStore();
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this note?')) {
@@ -20,22 +19,48 @@ export function NoteCard({ note, onEdit, onView }: NoteCardProps) {
     }
   };
 
+  const handleDuplicate = () => {
+    duplicateNote(note.id);
+  };
+
+  // Simple function to strip markdown for preview
+  const stripMarkdown = (text: string): string => {
+    return text
+      .replace(/#{1,6}\s+/g, '') // Remove headers
+      .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+      .replace(/\*(.*?)\*/g, '$1') // Remove italic
+      .replace(/`(.*?)`/g, '$1') // Remove inline code
+      .replace(/```[\s\S]*?```/g, '[Code Block]') // Replace code blocks
+      .replace(/>\s+/g, '') // Remove blockquotes
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Remove links but keep text
+      .replace(/^\s*[-+*]\s+/gm, '• ') // Convert list items to bullets
+      .replace(/^\s*\d+\.\s+/gm, '• ') // Convert numbered lists to bullets
+      .replace(/\n+/g, ' ') // Replace newlines with spaces
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim();
+  };
+
   return (
-    <div className={`${note.color} rounded-lg border p-4 shadow-sm transition-all hover:shadow-md`}>
+    <div 
+      className={`${note.color} rounded-lg border p-4 shadow-sm note-card hover-lift animate-fade-in group cursor-pointer transition-all duration-200 hover:shadow-md`}
+      onClick={() => onView(note)}
+    >
       <div className="flex items-start justify-between mb-2">
         <h3 
-          className="font-semibold text-lg line-clamp-2 cursor-pointer hover:text-primary"
-          onClick={() => onView(note)}
+          className="font-semibold text-lg line-clamp-2 text-gray-900 dark:text-gray-100 transition-colors duration-200"
         >
           {note.title || 'Untitled'}
         </h3>
         
-        <div className="flex items-center space-x-1">
+        <div 
+          className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          onClick={(e) => e.stopPropagation()} // Prevent card click when clicking buttons
+        >
           <Button
             variant="ghost"
             size="icon"
             onClick={() => togglePin(note.id)}
-            className={`h-8 w-8 ${note.pinned ? 'text-amber-500' : 'text-muted-foreground'}`}
+            className={`h-8 w-8 btn-animated transition-all duration-200 hover:scale-110 ${note.pinned ? 'text-amber-500 glow-effect' : 'text-muted-foreground hover:text-amber-500'}`}
             title={note.pinned ? 'Unpin note' : 'Pin note'}
           >
             <Pin className="h-4 w-4" />
@@ -45,7 +70,7 @@ export function NoteCard({ note, onEdit, onView }: NoteCardProps) {
             variant="ghost"
             size="icon"
             onClick={() => onEdit(note)}
-            className="h-8 w-8"
+            className="h-8 w-8 btn-animated transition-all duration-200 hover:scale-110 hover:text-blue-500"
             title="Edit note"
           >
             <Edit className="h-4 w-4" />
@@ -54,8 +79,18 @@ export function NoteCard({ note, onEdit, onView }: NoteCardProps) {
           <Button
             variant="ghost"
             size="icon"
+            onClick={handleDuplicate}
+            className="h-8 w-8 btn-animated transition-all duration-200 hover:scale-110 hover:text-green-500"
+            title="Duplicate note"
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={handleDelete}
-            className="h-8 w-8 text-destructive hover:text-destructive"
+            className="h-8 w-8 btn-animated transition-all duration-200 hover:scale-110 text-destructive hover:text-destructive"
             title="Delete note"
           >
             <Trash2 className="h-4 w-4" />
@@ -64,9 +99,12 @@ export function NoteCard({ note, onEdit, onView }: NoteCardProps) {
       </div>
 
       {note.content && (
-        <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
-          {note.content.replace(/#\w+/g, '').trim().substring(0, 150)}
-          {note.content.length > 150 && '...'}
+        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-3 mb-3">
+          {(() => {
+            const cleanContent = stripMarkdown(note.content);
+            const preview = cleanContent.substring(0, 150);
+            return preview + (cleanContent.length > 150 ? '...' : '');
+          })()}
         </p>
       )}
 
@@ -80,10 +118,16 @@ export function NoteCard({ note, onEdit, onView }: NoteCardProps) {
 
       {note.hashtags.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-3">
-          {note.hashtags.map((tag) => (
+          {note.hashtags.map((tag, index) => (
             <span
               key={tag}
-              className="inline-flex items-center px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium"
+              className="inline-flex items-center px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-all duration-200 cursor-pointer animate-scale-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent card click
+                const { searchNotes } = useNotesStore.getState();
+                searchNotes(tag);
+              }}
             >
               {tag}
             </span>
@@ -95,7 +139,7 @@ export function NoteCard({ note, onEdit, onView }: NoteCardProps) {
         <div className="space-y-2 mb-3">
           {note.keywords.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              <span className="text-xs font-medium text-muted-foreground">Keywords:</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Keywords:</span>
               {note.keywords.map((keyword) => (
                 <span
                   key={keyword}
@@ -109,7 +153,7 @@ export function NoteCard({ note, onEdit, onView }: NoteCardProps) {
           
           {note.blueprintNodes.length > 0 && (
             <div className="flex flex-wrap gap-1">
-              <span className="text-xs font-medium text-muted-foreground">Nodes:</span>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Nodes:</span>
               {note.blueprintNodes.map((node) => (
                 <span
                   key={node}
@@ -141,17 +185,9 @@ export function NoteCard({ note, onEdit, onView }: NoteCardProps) {
         </div>
       )}
 
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
+      <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
         <span>{formatDate(note.updatedAt)}</span>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => onView(note)}
-          className="h-6 px-2 text-xs"
-        >
-          <Eye className="h-3 w-3 mr-1" />
-          View
-        </Button>
+        <span className="text-xs opacity-60">Click to view</span>
       </div>
     </div>
   );

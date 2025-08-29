@@ -94,12 +94,95 @@ export const useNotesStore = create<NotesStore>((set, get) => ({
     });
   },
 
+  duplicateNote: (id) => {
+    set((state) => {
+      const originalNote = state.notes.find(note => note.id === id);
+      if (!originalNote) return state;
+
+      const now = Date.now();
+      const duplicatedNote: Note = {
+        ...originalNote,
+        id: generateId(),
+        title: `${originalNote.title} (Copy)`,
+        createdAt: now,
+        updatedAt: now,
+        pinned: false, // Duplicated notes are not pinned by default
+      };
+
+      const newNotes = [duplicatedNote, ...state.notes];
+      storage.saveNotes(newNotes);
+      
+      const filteredNotes = state.searchQuery 
+        ? searchNotes(newNotes, state.searchQuery).map(result => result.note)
+        : sortNotes(newNotes, state.settings.sortBy);
+
+      return {
+        notes: newNotes,
+        filteredNotes
+      };
+    });
+  },
+
   togglePin: (id) => {
     const { updateNote } = get();
     const note = get().notes.find(n => n.id === id);
     if (note) {
       updateNote(id, { pinned: !note.pinned });
     }
+  },
+
+  renameHashtag: (oldTag, newTag) => {
+    set((state) => {
+      const newNotes = state.notes.map(note => ({
+        ...note,
+        hashtags: note.hashtags.map(tag => tag === oldTag ? newTag : tag),
+        updatedAt: note.hashtags.includes(oldTag) ? Date.now() : note.updatedAt
+      }));
+      
+      storage.saveNotes(newNotes);
+      
+      const filteredNotes = state.searchQuery 
+        ? searchNotes(newNotes, state.searchQuery).map(result => result.note)
+        : sortNotes(newNotes, state.settings.sortBy);
+
+      return {
+        notes: newNotes,
+        filteredNotes
+      };
+    });
+  },
+
+  removeHashtag: (tagToRemove, deleteNotes = false) => {
+    set((state) => {
+      let newNotes;
+      
+      if (deleteNotes) {
+        // Remove all notes that have this hashtag
+        newNotes = state.notes.filter(note => !note.hashtags.includes(tagToRemove));
+      } else {
+        // Just remove the hashtag from all notes
+        newNotes = state.notes.map(note => ({
+          ...note,
+          hashtags: note.hashtags.filter(tag => tag !== tagToRemove),
+          updatedAt: note.hashtags.includes(tagToRemove) ? Date.now() : note.updatedAt
+        }));
+      }
+      
+      storage.saveNotes(newNotes);
+      
+      const filteredNotes = state.searchQuery 
+        ? searchNotes(newNotes, state.searchQuery).map(result => result.note)
+        : sortNotes(newNotes, state.settings.sortBy);
+
+      return {
+        notes: newNotes,
+        filteredNotes
+      };
+    });
+  },
+
+  getNotesWithHashtag: (hashtag) => {
+    return get().notes.filter(note => note.hashtags.includes(hashtag));
   },
 
   searchNotes: (query) => {

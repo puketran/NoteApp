@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Save, X, Image, Trash2, Plus } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Save, X, Image, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,13 +14,13 @@ interface NoteEditorProps {
 }
 
 const COLOR_OPTIONS = [
-  'bg-white',
-  'bg-amber-50',
-  'bg-blue-50',
-  'bg-green-50',
-  'bg-purple-50',
-  'bg-pink-50',
-  'bg-gray-50'
+  'bg-slate-50 dark:bg-slate-800',
+  'bg-amber-50 dark:bg-amber-900/30',
+  'bg-blue-50 dark:bg-blue-900/30',
+  'bg-green-50 dark:bg-green-900/30',
+  'bg-purple-50 dark:bg-purple-900/30',
+  'bg-pink-50 dark:bg-pink-900/30',
+  'bg-gray-50 dark:bg-gray-800'
 ];
 
 export function NoteEditor({ note, onSave, onCancel }: NoteEditorProps) {
@@ -38,6 +38,20 @@ export function NoteEditor({ note, onSave, onCancel }: NoteEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { notes } = useNotesStore();
   const availableHashtags = getAllHashtags(notes);
+
+  // Handle ESC key to close editor
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onCancel();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [onCancel]);
 
   const handleSave = () => {
     if (!title.trim()) {
@@ -129,18 +143,25 @@ export function NoteEditor({ note, onSave, onCancel }: NoteEditorProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-background border rounded-lg shadow-lg w-full max-w-6xl max-h-[95vh] overflow-hidden">
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+      <div className="bg-background border rounded-lg shadow-lg w-full max-w-6xl max-h-[95vh] overflow-hidden animate-scale-in glass-effect">
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             {note ? 'Edit Note' : 'New Note'}
           </h2>
           <div className="flex items-center space-x-2">
-            <Button onClick={handleSave} className="flex items-center gap-2">
+            <Button 
+              onClick={handleSave} 
+              className="flex items-center gap-2 btn-animated glow-effect transition-all duration-200 hover:scale-105"
+            >
               <Save className="h-4 w-4" />
               Save
             </Button>
-            <Button variant="outline" onClick={onCancel}>
+            <Button 
+              variant="outline" 
+              onClick={onCancel}
+              className="btn-animated transition-all duration-200 hover:scale-105"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>

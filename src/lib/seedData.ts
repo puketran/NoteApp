@@ -5,13 +5,13 @@ export const seedNotes: Note[] = [
   {
     id: generateId(),
     title: "Instanced Static Mesh Components",
-    content: "ISMs are crucial for performance optimization in UE5. They allow rendering thousands of identical meshes with minimal draw calls. Perfect for foliage, rocks, debris, etc.\n\nKey benefits:\n- Single draw call for multiple instances\n- GPU-based culling\n- LOD transitions\n- Hardware instancing support",
+    content: "# Instanced Static Mesh Components\n\nISMs are crucial for **performance optimization** in UE5. They allow rendering thousands of identical meshes with minimal draw calls. Perfect for foliage, rocks, debris, etc.\n\n## Key Benefits:\n\n- Single draw call for multiple instances\n- GPU-based culling\n- LOD transitions\n- Hardware instancing support\n\n## Usage Example:\n\n```cpp\n// C++ Example\nUInstancedStaticMeshComponent* ISMComponent;\nISMComponent->AddInstance(Transform);\n```\n\n> **Important:** Always batch your instances for maximum performance gains!",
     hashtags: ["#Blueprints", "#UE5", "#Performance"],
     keywords: ["ISM", "Add Instance", "performance", "draw calls"],
     blueprintNodes: ["Add Instance", "ForEachLoop", "Get Instance Transform"],
     definitions: "Efficiently renders many identical mesh instances using hardware instancing to reduce draw calls.",
     images: [],
-    color: "bg-green-50",
+    color: "bg-green-100",
     pinned: true,
     createdAt: Date.now() - 86400000 * 7, // 7 days ago
     updatedAt: Date.now() - 86400000 * 2   // 2 days ago
@@ -26,7 +26,7 @@ export const seedNotes: Note[] = [
     blueprintNodes: ["SetActiveWidgetIndex", "Get Active Widget Index"],
     definitions: "A container widget that shows only one of its child widgets at a time, useful for creating tabbed interfaces.",
     images: [],
-    color: "bg-blue-50",
+    color: "bg-blue-100",
     pinned: false,
     createdAt: Date.now() - 86400000 * 5,
     updatedAt: Date.now() - 86400000 * 1
@@ -35,13 +35,13 @@ export const seedNotes: Note[] = [
   {
     id: generateId(),
     title: "Material Parameter Collections",
-    content: "MPCs allow you to create global parameters that can be accessed by multiple materials simultaneously. Great for time of day systems, weather effects, etc.\n\nSteps to create:\n1. Create Material Parameter Collection asset\n2. Add scalar/vector parameters\n3. Reference in materials using Collection Parameter node\n4. Modify at runtime using Blueprint",
+    content: "## Material Parameter Collections (MPC)\n\nMPCs allow you to create **global parameters** that can be accessed by multiple materials simultaneously. Great for time of day systems, weather effects, etc.\n\n### Steps to Create:\n\n1. Create Material Parameter Collection asset\n2. Add scalar/vector parameters\n3. Reference in materials using `Collection Parameter` node\n4. Modify at runtime using Blueprint\n\n### Blueprint Usage:\n\n```blueprint\nSet Scalar Parameter Value\n├─ Collection: YourMPCAsset\n├─ Parameter Name: \"TimeOfDay\"\n└─ Value: 0.75\n```\n\n| Parameter Type | Use Case | Example |\n|----------------|----------|----------|\n| Scalar | Time values, intensity | Sun intensity, wind speed |\n| Vector | Colors, directions | Sun color, wind direction |\n| Linear Color | RGB values | Sky color, fog color |",
     hashtags: ["#Materials", "#UE5"],
     keywords: ["MPC", "global parameters", "time of day", "weather"],
     blueprintNodes: ["Set Scalar Parameter Value", "Set Vector Parameter Value"],
     definitions: "Global material parameters that can be shared across multiple materials and modified at runtime.",
     images: [],
-    color: "bg-purple-50",
+    color: "bg-purple-100",
     pinned: true,
     createdAt: Date.now() - 86400000 * 4,
     updatedAt: Date.now() - 86400000 * 3
@@ -56,7 +56,7 @@ export const seedNotes: Note[] = [
     blueprintNodes: ["Spawn System Attached", "Set Niagara Variable"],
     definitions: "A Niagara module that spawns a specific number of particles instantly at a given time.",
     images: [],
-    color: "bg-amber-50",
+    color: "bg-amber-100",
     pinned: false,
     createdAt: Date.now() - 86400000 * 3,
     updatedAt: Date.now() - 86400000 * 1
@@ -71,7 +71,7 @@ export const seedNotes: Note[] = [
     blueprintNodes: [],
     definitions: "Keyboard shortcuts that improve editor navigation and workflow efficiency.",
     images: [],
-    color: "bg-gray-50",
+    color: "bg-gray-100",
     pinned: false,
     createdAt: Date.now() - 86400000 * 2,
     updatedAt: Date.now() - 86400000 * 1
@@ -86,7 +86,7 @@ export const seedNotes: Note[] = [
     blueprintNodes: [],
     definitions: "Custom C++ components that can be attached to actors and exposed to Blueprint system.",
     images: [],
-    color: "bg-pink-50",
+    color: "bg-pink-100",
     pinned: false,
     createdAt: Date.now() - 86400000 * 1,
     updatedAt: Date.now() - 3600000 // 1 hour ago
@@ -101,7 +101,7 @@ export const seedNotes: Note[] = [
     blueprintNodes: ["Call", "Bind Event", "Unbind Event"],
     definitions: "A Blueprint system for broadcasting events to multiple listeners without requiring direct object references.",
     images: [],
-    color: "bg-green-50",
+    color: "bg-green-100",
     pinned: false,
     createdAt: Date.now() - 3600000 * 12, // 12 hours ago
     updatedAt: Date.now() - 3600000 * 2   // 2 hours ago
@@ -116,7 +116,7 @@ export const seedNotes: Note[] = [
     blueprintNodes: [],
     definitions: "Automatic material assignment for landscapes based on geometric properties like slope angle and world height.",
     images: [],
-    color: "bg-amber-50",
+    color: "bg-amber-100",
     pinned: false,
     createdAt: Date.now() - 3600000 * 6,
     updatedAt: Date.now() - 3600000

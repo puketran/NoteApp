@@ -49,7 +49,11 @@ export interface NotesStore {
   addNote: (note: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateNote: (id: string, updates: Partial<Note>) => void;
   deleteNote: (id: string) => void;
+  duplicateNote: (id: string) => void;
   togglePin: (id: string) => void;
+  renameHashtag: (oldTag: string, newTag: string) => void;
+  removeHashtag: (tagToRemove: string, deleteNotes?: boolean) => void;
+  getNotesWithHashtag: (hashtag: string) => Note[];
   searchNotes: (query: string) => void;
   updateSettings: (settings: Partial<AppSettings>) => void;
   loadNotes: () => void;
