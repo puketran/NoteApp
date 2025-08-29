@@ -1,0 +1,21 @@
+{
+  "github": {
+    "username": "puketran",
+    "repository": "NoteApp",
+    "branch": "main",
+    "pages": {
+      "source": "gh-pages",
+      "customDomain": ""
+    }
+  },
+  "deployment": {
+    "buildCommand": "npm run build",
+    "distFolder": "dist",
+    "commitMessage": "Deploy to GitHub Pages"
+  },
+  "project": {
+    "name": "Unreal Engine Learning Notes",
+    "description": "Personal Note Taking Application",
+    "basePath": "/NoteApp/"
+  }
+}
