@@ -6,12 +6,14 @@ import { Sidebar } from '@/components/Sidebar';
 import { Dashboard } from '@/components/Dashboard';
 import { NoteEditor } from '@/components/NoteEditor';
 import { SettingsModal } from '@/components/SettingsModal';
+import { HashtagManager } from '@/components/HashtagManager';
 import { useNotesStore } from '@/store/notesStore';
 import { Note } from '@/types';
 
 function App() {
   const [showEditor, setShowEditor] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showHashtagManager, setShowHashtagManager] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | undefined>();
   const [viewingNote, setViewingNote] = useState<Note | undefined>();
   
@@ -59,7 +61,10 @@ function App() {
       <Router>
         <div className="flex h-screen bg-background">
           {/* Sidebar */}
-          <Sidebar onOpenSettings={() => setShowSettings(true)} />
+          <Sidebar 
+            onOpenSettings={() => setShowSettings(true)}
+            onOpenHashtagManager={() => setShowHashtagManager(true)}
+          />
           
           {/* Main Content */}
           <div className="flex-1 flex flex-col overflow-hidden">
@@ -97,6 +102,11 @@ function App() {
           <SettingsModal
             isOpen={showSettings}
             onClose={() => setShowSettings(false)}
+          />
+
+          <HashtagManager
+            isOpen={showHashtagManager}
+            onClose={() => setShowHashtagManager(false)}
           />
         </div>
       </Router>
